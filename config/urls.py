@@ -20,3 +20,8 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+"""
+Определяет маршрутизацию для вашего проекта, 
+связывая URL-адреса с соответствующими контроллерами (views)
+"""
