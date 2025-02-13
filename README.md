@@ -1,1 +1,1 @@
-# 22_Introduction-to-Django.
+# 22 модуль. Знакомство с Django
