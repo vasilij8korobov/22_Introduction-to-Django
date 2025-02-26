@@ -16,3 +16,7 @@ def submit_data(request):
     # request.POST  - и POST(отправить) параметры запроса соответственно.
     if request.method == 'POST':
         return HttpResponse("Данные отправлены")
+
+
+def show_item(request, item_id):
+    return render(request, 'app/item.html', {'item_id': item_id})
