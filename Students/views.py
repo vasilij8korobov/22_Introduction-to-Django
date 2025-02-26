@@ -1,3 +1,18 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
-# Create your views here.
+
+def example_view(request):
+    return render(request, 'app/example.html')
+
+
+def show_data(request):
+    if request.method == 'GET':
+        return render(request, 'app/show_data.html')
+
+
+def submit_data(request):
+    # request.GET   - это словари хранящие в себе GET(получить)
+    # request.POST  - и POST(отправить) параметры запроса соответственно.
+    if request.method == 'POST':
+        return HttpResponse("Данные отправлены")
