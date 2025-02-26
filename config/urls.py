@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Students/', include('Students.urls'))     # таким образом мы подключаем .urls с нешего приложения
+    path('Students/', include('Students.urls', namespace='Students'))     # таким образом мы подключаем .urls с нешего приложения
 ]
 
 """
