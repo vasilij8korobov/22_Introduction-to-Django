@@ -26,3 +26,11 @@ def about(request):
     return render(request, 'Students/about.html')
 
 
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        message = request.POST.get('message')
+
+        return HttpResponse(f'Спасибо, {name}! Сообщение получено.')
+    return render(request, 'Students/contact.html')
+
