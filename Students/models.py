@@ -32,6 +32,7 @@ class Student(models.Model):
 
     first_name = models.CharField(max_length=150, verbose_name='Имя')
     last_name = models.CharField(max_length=150, verbose_name='Фамилия')
+    # description = models.TextField(null=True, blank=True)
     year = models.CharField(max_length=6, choices=YEAR_IN_SCHOOL_CHOICES, default=FIRST_YEAR, verbose_name='Курс')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='Students', default=get_default_group)
 
