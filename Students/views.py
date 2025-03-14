@@ -46,7 +46,7 @@ def index(request):
     return render(request, 'Students/index.html', context=context)
 
 
-def student_detail(request):
+def student_detail(request, student_id):
     student = Student.objects.get(id=1)
     context = {
         'student': student,
