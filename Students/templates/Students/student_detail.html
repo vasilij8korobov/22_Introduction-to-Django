@@ -1,0 +1,11 @@
+{% extends 'Students/base.html' %}
+
+{% block title %}Список студентов{% endblock %}
+
+{% block content %}
+{% include 'Students/header.html' %}
+<h2>Детали студента</h2>
+<p>Имя: {{ student.first_name }}</p>
+<p>Фамилия: {{ student.last_name }}</p>
+<p>Курс: {{ student.get_year_display }}</p>
+{% endblock %}
