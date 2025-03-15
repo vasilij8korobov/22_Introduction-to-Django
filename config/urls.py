@@ -19,15 +19,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Students/', include('Students.urls', namespace='Students'))     # таким образом мы подключаем .urls с нешего приложения
+    path('Students/', include('Students.urls', namespace='Students')),    # таким образом мы подключаем .urls с нешего приложения
+    path('library/', include('library.urls', namespace='library')),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
 
 """
 Определяет маршрутизацию для вашего проекта, 
