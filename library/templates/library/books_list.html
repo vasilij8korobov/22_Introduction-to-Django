@@ -7,9 +7,10 @@
 <h2>Список книг</h2>
 <ul class="list-group">
     {% for book in books %}
-        <li class="list-group-item">
-            <a href="{% url 'library:book_detail' book.pk %}">{{ book.title }}</a> - {{ book.publication_date|date:"d M Y" }} - {{ book.author.first_name }} {{ book.author.last_name }}
-        </li>
+    <li class="list-group-item">
+        <a href="{% url 'library:book_detail' book.pk %}"> {{ book.title }} - {{ book.publication_date|date:"d M Y" }} -
+            {{ book.author.first_name }} {{ book.author.last_name }} </a>
+    </li>
     {% endfor %}
 </ul>
 {% endblock %}

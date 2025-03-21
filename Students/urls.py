@@ -12,7 +12,11 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('index/', views.index, name='index'),
     path('student_detail/<int:student_id>/', views.student_detail, name='student_details'),
-    path('student_list/', views.student_list, name='student_list'),
+    path('students/', views.student_list, name='student_list'),
+
+
+    path('student_create/', views.StudentCreateView.as_view(), name='student_create'),
+    path('student_update/<int:pk>/', views.StudentUpdateView.as_view(), name='student_update'),
 
     # CBV Адреса
     path('mymodel/list/', views.MyModelListView.as_view(), name='mymodel_list'),
