@@ -4,7 +4,23 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 
+from Students.forms import StudentForm
 from Students.models import Student, MyModel
+
+
+class StudentCreateView(CreateView):
+    model = Student # Указываем модель, с которой будет работать это представление
+    form_class = StudentForm # Указываем форму, которая будет использоваться для ввода данных
+    template_name = 'Students/student_form.html' # Шаблон, который будет использоваться для отображения формы
+    success_url = reverse_lazy('Students:student_list') # URL, на который будет перенаправлен пользователь после успешной отправки формы
+
+
+class StudentUpdateView(UpdateView):
+    model = Student
+    form_class = StudentForm
+    template_name = 'Students/student_form.html'
+    success_url = reverse_lazy('Students:student_list')
+
 
 """ниже идут CBV контроллеры"""
 
