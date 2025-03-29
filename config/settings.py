@@ -57,7 +57,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "Students",
-    "library"
+    "library",
+    "users",
+
     # Ваши собственные приложения
 ]
 """
@@ -186,3 +188,5 @@ MEDIA_ROOT = BASE_DIR / 'media'  # -это директория на диске,
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
