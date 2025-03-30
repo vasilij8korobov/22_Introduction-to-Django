@@ -161,7 +161,7 @@ AUTH_PASSWORD_VALIDATORS — список валидаторов,
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'  # устанавливает язык для проекта
+LANGUAGE_CODE = 'ru-ru'  # устанавливает язык для проекта
 
 TIME_ZONE = 'UTC'  # устанавливает часовую зону для проекта.
 # Пример для московского времени: TIME_ZONE = 'Europe/Moscow'
