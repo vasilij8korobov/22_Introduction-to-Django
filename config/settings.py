@@ -190,3 +190,49 @@ MEDIA_ROOT = BASE_DIR / 'media'  # -это директория на диске,
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'Vasya228korobov@yandex.ru'
+EMAIL_HOST_PASSWORD = 'ojaphtktlzhnwvgw'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+"""
+EMAIL_BACKEND — определяет, какой бэкенд использовать для отправки писем. 
+Рекомендуем использовать SMTP-бэкенд для работы с почтой.
+SMTP-бэкенд в Django — это компонент, 
+который отвечает за отправку электронных писем через протокол SMTP 
+(Simple Mail Transfer Protocol). Этот бэкенд используется для интеграции с 
+почтовыми серверами и доставки email-сообщений из вашего Django-приложения.
+
+EMAIL_HOST — адрес SMTP-сервера
+
+EMAIL_PORT — порт SMTP-сервера
+
+EMAIL_USE_TLS — включает использование TLS для шифрования соединения.
+
+TLS (Transport Layer Security) — это криптографический протокол, 
+который обеспечивает безопасность передачи данных по сети. 
+TLS используется для шифрования данных, передаваемых между веб-браузером и сервером, 
+что предотвращает их перехват и изменение злоумышленниками.
+
+EMAIL_USE_SSL — включает использование SSL для шифрования соединения.
+
+SSL (Secure Sockets Layer) — это предшественник TLS, 
+также предназначенный для обеспечения безопасности передачи данных по сети. 
+SSL используется для шифрования данных и установления защищенного соединения между 
+клиентом и сервером.
+
+EMAIL_HOST_USER — имя пользователя для аутентификации на SMTP-сервере
+
+EMAIL_HOST_PASSWORD — пароль для аутентификации на SMTP-сервере
+
+DEFAULT_FROM_EMAIL — адрес электронной почты по умолчанию, 
+с которого будут отправляться письма
+"""
+
+LOGIN_REDIRECT_URL = 'library:books_list'
+LOGIN_URL = 'users:login'
