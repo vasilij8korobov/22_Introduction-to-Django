@@ -1,18 +1,60 @@
-from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, Http404, HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
 
 from Students.forms import StudentForm
 from Students.models import Student, MyModel
 
 
+class PromoteStudentView(LoginRequiredMixin, View):
+    def next_year(current_year):
+        year_order = [
+            Student.FIRST_YEAR,
+            Student.SECOND_YEAR,
+            Student.THIRD_YEAR,
+            Student.FOURTH_YEAR
+        ]
+        current_index = year_order.index(current_year)
+        if current_index < len(year_order) - 1:
+            return year_order[current_index + 1]
+        else:
+            return year_order[current_index]
+
+    def post(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+
+        if request.user.has_perm('students.can_promote_student'):
+            return HttpResponseForbidden("У вас нет прав для перевода студента.")
+
+        # Логика перевода студента на следующий курс
+        student.year = self.next_year(student.year)
+        student.save()
+
+        return redirect('students:student_list')
+
+
+class ExpelStudentView(LoginRequiredMixin, View):
+    def post(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+
+        if request.user.has_perm('students.can_expel_student'):
+            return HttpResponseForbidden("У вас нет прав для исключения студента.")
+
+        # Логика исключения студента
+        student.delete()
+
+        return redirect('students:student_list')
+
+
 class StudentCreateView(CreateView):
-    model = Student # Указываем модель, с которой будет работать это представление
-    form_class = StudentForm # Указываем форму, которая будет использоваться для ввода данных
-    template_name = 'Students/student_form.html' # Шаблон, который будет использоваться для отображения формы
-    success_url = reverse_lazy('Students:student_list') # URL, на который будет перенаправлен пользователь после успешной отправки формы
+    model = Student  # Указываем модель, с которой будет работать это представление
+    form_class = StudentForm  # Указываем форму, которая будет использоваться для ввода данных
+    template_name = 'Students/student_form.html'  # Шаблон, который будет использоваться для отображения формы
+    success_url = reverse_lazy(
+        'Students:student_list')  # URL, на который будет перенаправлен пользователь после успешной отправки формы
 
 
 class StudentUpdateView(UpdateView):
@@ -20,6 +62,17 @@ class StudentUpdateView(UpdateView):
     form_class = StudentForm
     template_name = 'Students/student_form.html'
     success_url = reverse_lazy('Students:student_list')
+
+
+class StudentListView(LoginRequiredMixin, ListView):
+    model = Student
+    template_name = 'students/student_list.html'
+    context_object_name = 'students'
+
+    def get_queryset(self):
+        if not self.request.user.has_perm('students.view_student'):
+            return Student.objects.none()
+        return Student.objects.all()
 
 
 """ниже идут CBV контроллеры"""
