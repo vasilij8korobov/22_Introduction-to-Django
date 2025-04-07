@@ -31,10 +31,7 @@ class BooksListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Book
     template_name = 'library/books_list.html'
     context_object_name = 'books'
-
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     return queryset.filter(publication_date__year__gt=2000)
+    permission_required = 'library.view_book'
 
 
 class BookDetailView(LoginRequiredMixin, DetailView):
@@ -53,6 +50,7 @@ class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = BookForm
     template_name = 'library/book_form.html'
     success_url = reverse_lazy('library:books_list')
+    permission_required = 'library.add_book'
 
 
 class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
@@ -60,9 +58,11 @@ class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = BookForm
     template_name = 'library/book_form.html'
     success_url = reverse_lazy('library:books_list')
+    permission_required = 'library.change_book'
 
 
-class BookDeleteView(LoginRequiredMixin, DeleteView):
+class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Book
     template_name = 'library/book_confirm_delete.html'
     success_url = reverse_lazy('library:books_list')
+    permission_required = 'library.delete_book'
