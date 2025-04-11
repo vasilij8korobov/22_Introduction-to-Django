@@ -236,3 +236,23 @@ DEFAULT_FROM_EMAIL — адрес электронной почты по умо�
 
 LOGIN_REDIRECT_URL = 'library:books_list'
 LOGIN_URL = 'users:login'
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
+"""
+CACHES — это словарь, где вы определяете различные конфигурации кеша. 
+ Ключ 'default' указывает на основную конфигурацию кеша.
+ 
+BACKEND — указывает на использование бэкенда django.core.cache.backends.redis.RedisCache, 
+который предоставляет Django.
+
+LOCATION — указывает на расположение Redis-сервера. 
+В данном примере используется локальный сервер Redis, работающий на порту 6379. 
+/1 в конце URL указывает на использование первой базы данных Redis 
+(в Redis может быть несколько баз данных, пронумерованных от 0 до 15 по умолчанию)
+"""

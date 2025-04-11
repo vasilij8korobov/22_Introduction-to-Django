@@ -7,6 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .forms import AuthorForm, BookForm
 from .models import Book, Author
 
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.core.cache import cache
+
 
 class ReviewBookView(LoginRequiredMixin, View):
     def post(self, request, book_id):
@@ -41,6 +45,13 @@ class AuthorListView(ListView):
     template_name = 'library/authors_list.html'
     context_object_name = 'authors'
 
+    def get_queryset(self):
+        queryset = cache.get('authors_queryset')
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('authors_queryset', queryset, 60 * 15)  # Кешируем данные на 15 минут
+        return queryset
+
 
 class AuthorCreateView(CreateView):
     model = Author
@@ -56,6 +67,7 @@ class AuthorUpdateView(UpdateView):
     success_url = reverse_lazy('library:authors_list')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class BooksListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Book
     template_name = 'library/books_list.html'
@@ -63,6 +75,7 @@ class BooksListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'library.view_book'
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class BookDetailView(LoginRequiredMixin, DetailView):
     model = Book
     template_name = 'library/book_detail.html'

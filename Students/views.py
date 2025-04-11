@@ -8,6 +8,21 @@ from django.views.generic import ListView, DetailView, View
 from Students.forms import StudentForm
 from Students.models import Student, MyModel
 
+from django.core.cache import cache
+
+
+def my_view(request):   # Пример
+    # Попытка получить данные из кеша
+    data = cache.get('my_key')
+
+    # Если данные не найдены в кеше, выполняем вычисления и сохраняем результат в кеш
+    if not data:
+        data = 'some expensive computation'
+        cache.set('my_key', data, 60 * 15)  # Кешируем данные на 15 минут
+
+    # Возвращаем ответ с данными
+    return HttpResponse(data)
+
 
 class PromoteStudentView(LoginRequiredMixin, View):
     def next_year(current_year):
