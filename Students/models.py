@@ -56,6 +56,10 @@ class Student(models.Model):
         verbose_name = 'студент'
         verbose_name_plural = 'студенты'
         ordering = ['last_name']
+        permissions = [
+            ("can_promote_student", "Can promote student"),
+            ("can_expel_student", "Can expel student"),         # обрати внимание - это список кортежей [('_', " "),]
+        ]  # устанавливаем права доступа
 
     # first_name = models.CharField(max_length=150, verbose_name="Имя")
     # last_name = models.CharField(max_length=150, verbose_name="Фамилия", unique=True)

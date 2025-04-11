@@ -23,6 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('Students/', include('Students.urls', namespace='Students')),    # таким образом мы подключаем .urls с нешего приложения
     path('library/', include('library.urls', namespace='library')),
+    path('users/', include('users.urls', namespace='users')),
+
 ]
 
 if settings.DEBUG:
