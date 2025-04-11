@@ -1,7 +1,165 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, Http404, HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, View
 
-from Students.models import Student
+from Students.forms import StudentForm
+from Students.models import Student, MyModel
+
+
+class PromoteStudentView(LoginRequiredMixin, View):
+    def next_year(current_year):
+        year_order = [
+            Student.FIRST_YEAR,
+            Student.SECOND_YEAR,
+            Student.THIRD_YEAR,
+            Student.FOURTH_YEAR
+        ]
+        current_index = year_order.index(current_year)
+        if current_index < len(year_order) - 1:
+            return year_order[current_index + 1]
+        else:
+            return year_order[current_index]
+
+    def post(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+
+        if request.user.has_perm('students.can_promote_student'):
+            return HttpResponseForbidden("У вас нет прав для перевода студента.")
+
+        # Логика перевода студента на следующий курс
+        student.year = self.next_year(student.year)
+        student.save()
+
+        return redirect('students:student_list')
+
+
+class ExpelStudentView(LoginRequiredMixin, View):
+    def post(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+
+        if request.user.has_perm('students.can_expel_student'):
+            return HttpResponseForbidden("У вас нет прав для исключения студента.")
+
+        # Логика исключения студента
+        student.delete()
+
+        return redirect('students:student_list')
+
+
+class StudentCreateView(CreateView):
+    model = Student  # Указываем модель, с которой будет работать это представление
+    form_class = StudentForm  # Указываем форму, которая будет использоваться для ввода данных
+    template_name = 'Students/student_form.html'  # Шаблон, который будет использоваться для отображения формы
+    success_url = reverse_lazy(
+        'Students:student_list')  # URL, на который будет перенаправлен пользователь после успешной отправки формы
+
+
+class StudentUpdateView(UpdateView):
+    model = Student
+    form_class = StudentForm
+    template_name = 'Students/student_form.html'
+    success_url = reverse_lazy('Students:student_list')
+
+
+class StudentListView(LoginRequiredMixin, ListView):
+    model = Student
+    template_name = 'students/student_list.html'
+    context_object_name = 'students'
+
+    def get_queryset(self):
+        if not self.request.user.has_perm('students.view_student'):
+            return Student.objects.none()
+        return Student.objects.all()
+
+
+"""ниже идут CBV контроллеры"""
+
+
+class MyModelCreateView(CreateView):
+    model = MyModel
+    fields = ['name', 'description']
+    template_name = 'Students/mymodel_form.html'
+    success_url = reverse_lazy('Students:mymodel_list')
+
+    def form_valid(self, form):
+        """
+        form_valid() — используется для обработки данных,
+        если форма прошла валидацию.
+        Этот метод вызывается после успешной валидации формы и
+        сохранения данных
+        """
+        form.instance.created_by = self.request.user
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """
+        form_invalid() — используется для обработки данных,
+        если форма не прошла валидацию.
+        Этот метод вызывается при ошибках валидации формы
+        """
+        response = super().form_invalid(form)
+        response.context_data['error_message'] = 'Please correct the errors'
+
+        return response
+
+
+class MyModelListView(ListView):
+    model = MyModel
+    template_name = 'Students/mymodel_list.html'
+    context_object_name = 'mymodels'
+
+    def get_queryset(self):
+        """
+        get_queryset() — используется для получения набора данных,
+        который будет отображаться в представлении.
+        Этот метод позволяет настроить выборку данных из базы данных
+        """
+        queryset = super().get_queryset().filter(is_active=True)
+        return queryset
+
+
+class MyModelDetailView(DetailView):
+    model = MyModel
+    template_name = 'Students/mymodel_detail.html'
+    context_object_name = 'mymodel'
+
+    def get_additional_data(self):
+        return 'Это дополнительная информация'
+
+    def get_context_data(self, **kwargs):
+        """
+        get_context_data() — используется для добавления данных в контекст шаблона.
+        Этот метод позволяет передавать дополнительные данные в шаблон для рендеринга
+        """
+        context = super().get_context_data(**kwargs)
+        context['additional_data'] = self.get_additional_data()
+        return context
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if not obj.is_active:
+            raise Http404('Object not found')
+        return obj
+
+
+class MyModelUpdateView(UpdateView):
+    model = MyModel
+    fields = ['name', 'description']
+    template_name = 'Students/mymodel_form.html'
+    success_url = reverse_lazy('Students:mymodel_list')
+
+
+class MyModelDeleteView(DeleteView):
+    model = MyModel
+    template_name = 'Students/mymodel_confirm_delete.html'
+    success_url = reverse_lazy('Students:mymodel_list')
+
+
+"""ниже идут FBV"""
 
 
 def example_view(request):
