@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 from .forms import AuthorForm, BookForm
 from .models import Book, Author
+from .services import BookService
 
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
@@ -68,11 +69,11 @@ class AuthorUpdateView(UpdateView):
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
-class BooksListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class BooksListView(LoginRequiredMixin, ListView):  #  PermissionRequiredMixin,
     model = Book
     template_name = 'library/books_list.html'
     context_object_name = 'books'
-    permission_required = 'library.view_book'
+    # permission_required = 'library.view_book'
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
@@ -82,17 +83,23 @@ class BookDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'book'
 
     def get_context_data(self, **kwargs):
+        # Получаем стандартный контекст данных из родительского класса
         context = super().get_context_data(**kwargs)
         context['author_books_count'] = Book.objects.filter(author=self.object.author).count()
+        # Получаем ID книги из объекта
+        book_id = self.object.id
+        # Добавляем в контекст средний рейтинг и статус популярности книги
+        context['average_rating'] = BookService.calculate_average_rating(book_id)
+        context['is_popular'] = BookService.is_popular(book_id)
         return context
 
 
-class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class BookCreateView(LoginRequiredMixin, CreateView):  # PermissionRequiredMixin, вышел из чата
     model = Book
     form_class = BookForm
     template_name = 'library/book_form.html'
     success_url = reverse_lazy('library:books_list')
-    permission_required = 'library.add_book'
+    # permission_required = 'library.add_book'
 
 
 class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):

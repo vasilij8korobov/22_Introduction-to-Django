@@ -3,9 +3,8 @@
 {% block title %}Список студентов{% endblock %}
 
 {% block content %}
-{% include 'Students/header.html' %}
-<h2>Детали студента</h2>
-<p>Имя: {{ student.first_name }}</p>
-<p>Фамилия: {{ student.last_name }}</p>
-<p>Курс: {{ student.get_year_display }}</p>
+<h2>{{ full_name }}</h2>
+<p>Средний балл: {{ average_grade }}</p>
+<p>Сдал: {{ has_passed|yesno:"Да,Нет" }}</p>
+<a href="{% url 'Students:student_list' %}" class="btn btn-primary">Назад к списку студентов</a>
 {% endblock %}
